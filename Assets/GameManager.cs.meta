@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: aa86a41f2265f9548ad3082636b4a7d4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - TetrisBlockPrefab: {fileID: 2398767832956938240, guid: 077d80f45979f2441b7c5ce43f418233, type: 3}
+  - TilePrefab: {fileID: 7187339843482450361, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
