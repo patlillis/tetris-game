@@ -89,25 +89,23 @@ public class GameManager : MonoBehaviour
         // Spawn next piece in the bag.
         GameObject piecePrefab = _randomPrefabsBag[0];
         _randomPrefabsBag.RemoveAt(0);
-        TetrisPiece pieceScript = piecePrefab.GetComponent<TetrisPiece>();
-        Instantiate(piecePrefab,
-                            new Vector2(Constants.BOARD_WIDTH / 2 - 1, 0) + pieceScript.SpawnPositionOffset,
+        PieceData pieceData = piecePrefab.GetComponent<PieceData>();
+        var fallingPiece = Instantiate(piecePrefab,
+                            new Vector2(Constants.BOARD_WIDTH / 2 - 1, 0) + pieceData.SpawnPositionOffset,
                             Quaternion.identity,
                             this.transform);
-
-        Debug.Log("a");
-        Debug.Log("b");
+        fallingPiece.AddComponent<FallingPiece>();
+        fallingPiece.GetComponent<FallingPiece>().PieceData = pieceData;
 
         // Update next pieces.
         for (int i = 0; i < Constants.NEXT_PIECES_COUNT; i++)
         {
             if (_nextPieces[i] != null) Destroy(_nextPieces[i]);
-            _nextPieces[i] = Instantiate(PiecePrefabs[i],
-                            new Vector2(0, 0) + pieceScript.SpawnPositionOffset,
+            _nextPieces[i] = Instantiate(_randomPrefabsBag[i],
+                            new Vector2(15, -3.75f - (2.75f * i)) + _randomPrefabsBag[i].GetComponent<PieceData>().VisualCenterOffset,
                             Quaternion.identity,
                             this.transform);
         }
-        Debug.Log("c");
     }
 
     public void AddPieceToFallenTiles(GameObject piece)

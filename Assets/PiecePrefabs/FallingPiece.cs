@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TetrisPiece : MonoBehaviour
+public class FallingPiece : MonoBehaviour
 {
     public struct MoveState : System.IFormattable
     {
@@ -30,15 +30,9 @@ public class TetrisPiece : MonoBehaviour
         CounterClockwise
     }
 
-    public enum WallKickTypes
-    {
-        O,
-        I,
-        JLSTZ
-    }
-
-    public Vector2 SpawnPositionOffset;
-    public WallKickTypes WallKickType;
+    // This is set dynamically via GameManager.
+    [HideInInspector]
+    public PieceData PieceData;
 
     private GameManager _gameManager;
     private MoveState _dropState;
@@ -49,6 +43,7 @@ public class TetrisPiece : MonoBehaviour
     // Start is called before the first frame update.
     void Start()
     {
+        Debug.Log("FallingPiece.Start");
         _gameManager = FindObjectOfType<GameManager>();
         // Use spawn time as initial "last dropped time" so that it doesn't drop immediately upon spawning.
         _dropState = new MoveState(Time.fixedTime, isMovingContinuously: false);
@@ -166,7 +161,7 @@ public class TetrisPiece : MonoBehaviour
     // Wall kick offset values taken from https://tetris.wiki/Super_Rotation_System#Wall_Kicks.
     private Vector2[] GetWallKickOffsets(RotationType rotationType)
     {
-        return (this.WallKickType, this.transform.rotation.eulerAngles.y, rotationType) switch
+        return (this.PieceData.WallKickType, this.transform.rotation.eulerAngles.y, rotationType) switch
         {
             /* J, L, S, T, Z PIECE WALL KICK OFFSETS */
             // 0->R

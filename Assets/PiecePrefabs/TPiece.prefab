@@ -44,10 +44,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1924756076481173820}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a6632f14b93fee4cb9ba748ed3bd98a, type: 3}
+  m_Script: {fileID: 11500000, guid: 0da33a746674fcf45b9a79d6da8792d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnPositionOffset: {x: 0, y: -1, z: 0}
+  SpawnPositionOffset: {x: 0, y: -1}
+  VisualCenterOffset: {x: 0, y: -0.5}
   WallKickType: 2
 --- !u!1001 &1924756076008973492
 PrefabInstance:

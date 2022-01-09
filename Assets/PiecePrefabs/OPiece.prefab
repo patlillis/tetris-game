@@ -48,6 +48,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6252805514305832929, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
+      propertyPath: VisualCenterOffset.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6252805514305832929, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
       propertyPath: SpawnPositionOffset.x
       value: 0.5
       objectReference: {fileID: 0}
