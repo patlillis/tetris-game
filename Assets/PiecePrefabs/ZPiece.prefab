@@ -7,6 +7,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1423221683539066989, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -6912723129501951423, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 1423221683561874437, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -6912723129501951423, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 1423221684676473114, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -6912723129501951423, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 1423221684964379126, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -6912723129501951423, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
     - target: {fileID: 3082262963810053260, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -53,7 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3082262963810053267, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
       propertyPath: m_Name
-      value: ReverseZPiece
+      value: ZPiece
       objectReference: {fileID: 0}
     - target: {fileID: 4816755786411132339, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
       propertyPath: m_LocalPosition.x

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public List<GameObject> PiecePrefabs;
-    public GameObject TilePrefab;
 
     public Text ScoreText;
     public Text LevelText;
@@ -112,15 +111,17 @@ public class GameManager : MonoBehaviour
 
     public void AddPieceToFallenTiles(GameObject piece)
     {
-        foreach (SpriteRenderer pieceTile in piece.GetComponentsInChildren<SpriteRenderer>())
+        foreach (SpriteRenderer pieceTile in piece.GetComponent<FallingPiece>().GetChildSprites())
         {
-            if (pieceTile.gameObject.transform.parent.name == FallingPiece.GHOST_PIECE_NAME) continue;
-
             var x = Mathf.RoundToInt(pieceTile.transform.position.x);
             var y = Mathf.RoundToInt(pieceTile.transform.position.y);
             // TODO: These tiles sometimes have weird itty-bitty offsets applied to their position?
-            var newTile = Instantiate(TilePrefab, new Vector3(x, y, 0), pieceTile.transform.rotation, this.transform);
-            newTile.name = $"FallenTile[{x},{y}]";
+            var newTile = new GameObject($"FallenTile[{x},{y}]", typeof(SpriteRenderer));
+            newTile.transform.position = new Vector3(x, y, 0);
+            newTile.transform.parent = this.transform;
+            newTile.transform.rotation = pieceTile.transform.rotation;
+            var spriteRenderer = newTile.GetComponent<SpriteRenderer>();
+            spriteRenderer.sprite = pieceTile.sprite;
             _fallenTileGrid[x, -y] = newTile;
             // Debug.Log($"Adding new fallen tile at [{x}, {y}] with position {newTile.transform.position}");
         }

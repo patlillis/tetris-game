@@ -39,6 +39,22 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5494006759346201964, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -7830057235797742028, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 5494006759729503616, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -7830057235797742028, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 5494006760779114655, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -7830057235797742028, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 5494006760873749751, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -7830057235797742028, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
     - target: {fileID: 6252805514305832929, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
       propertyPath: WallKicks
       value: 0

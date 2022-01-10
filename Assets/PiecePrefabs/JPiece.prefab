@@ -55,6 +55,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: JPiece
       objectReference: {fileID: 0}
+    - target: {fileID: 2571610590578787509, guid: 69cebd97b3d9bcc418aff15e5f04bbb9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2754720013901086527, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 2571610590833130585, guid: 69cebd97b3d9bcc418aff15e5f04bbb9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2754720013901086527, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 2571610591693386154, guid: 69cebd97b3d9bcc418aff15e5f04bbb9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2754720013901086527, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: 2571610591720912322, guid: 69cebd97b3d9bcc418aff15e5f04bbb9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 2754720013901086527, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
     - target: {fileID: 4127827525283667668, guid: 69cebd97b3d9bcc418aff15e5f04bbb9, type: 3}
       propertyPath: SpawnPositionOffset.x
       value: 0

@@ -32,6 +32,7 @@ public class FallingPiece : MonoBehaviour
     }
 
     public const string GHOST_PIECE_NAME = "Ghost";
+    private const float GHOST_PIECE_ALPHA = 0.3f;
 
     // This is set dynamically via GameManager.
     [HideInInspector]
@@ -53,6 +54,10 @@ public class FallingPiece : MonoBehaviour
         _dropState = new MoveState(Time.fixedTime, isMovingContinuously: false);
         _ghostPiece = Instantiate(this.gameObject, Vector3.zero, Quaternion.identity, this.transform);
         _ghostPiece.name = GHOST_PIECE_NAME;
+        foreach (SpriteRenderer sprite in _ghostPiece.GetComponentsInChildren<SpriteRenderer>())
+        {
+            sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, GHOST_PIECE_ALPHA);
+        }
         Destroy(_ghostPiece.GetComponent<FallingPiece>());
     }
 
@@ -157,8 +162,11 @@ public class FallingPiece : MonoBehaviour
                 }
                 else
                 {
-                    // _ghostPiece.SetActive(true);
                     _ghostPiece.transform.position = this.transform.position + new Vector3(0, -y + 1, 0);
+                    foreach (SpriteRenderer sprite in _ghostPiece.GetComponentsInChildren<SpriteRenderer>())
+                    {
+                        sprite.transform.rotation = Quaternion.Euler(0, 0, -this.transform.rotation.eulerAngles.z);
+                    }
                 }
                 break;
             }
@@ -190,7 +198,16 @@ public class FallingPiece : MonoBehaviour
         }
     }
 
+    // Properly filters out ghost sprites. (Probably a better way to do this ¯\_(ツ)_/¯).
+    public List<SpriteRenderer> GetChildSprites()
+    {
+        // Don't want to consider ghost pieces in collision. 
+        return new List<SpriteRenderer>(GetComponentsInChildren<SpriteRenderer>())
+                        .FindAll(sprite => sprite.gameObject.transform.parent.name != GHOST_PIECE_NAME);
+    }
+
     // Wall kick offset values taken from https://tetris.wiki/Super_Rotation_System#Wall_Kicks.
+    // TODO: I Piece wallkick when vertical seems to send it too far infield?
     private Vector2[] GetWallKickOffsets(RotationType rotationType)
     {
         return (this.PieceData.WallKickType, this.transform.rotation.eulerAngles.y, rotationType) switch
@@ -288,6 +305,16 @@ public class FallingPiece : MonoBehaviour
         {
             transform.position += (Vector3)movement;
             transform.Rotate(rotation);
+
+            // Make sure tiles are rotated opposite so that they still look right-side-up.
+            // (This is probably a sign that having pieces as whole game objects
+            // with actual rotations, instead of managing tiles programmatically
+            // is probably not a great way to approach things, but whatever...)
+            foreach (SpriteRenderer sprite in GetChildSprites())
+            {
+                sprite.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.eulerAngles.z);
+            }
+
             return true;
         }
 
@@ -321,12 +348,8 @@ public class FallingPiece : MonoBehaviour
 
         // Check if any of the tiles on this piece are directly in the way of any of the fallen pieces.
         // This probably isn't super efficient, but there's not that many pieces...
-        foreach (SpriteRenderer pieceTile in GetComponentsInChildren<SpriteRenderer>())
+        foreach (SpriteRenderer pieceTile in GetChildSprites())
         {
-            // Don't want to consider ghost pieces in collision. (Probably a
-            // better way to do this ¯\_(ツ)_/¯).
-            if (pieceTile.gameObject.transform.parent.name == GHOST_PIECE_NAME) continue;
-
             Vector2 tilePosition = pieceTile.transform.position;
             if (tilePosition.y < -Constants.BOARD_HEIGHT + 0.9) collisionFound = true;
             if (tilePosition.x < -0.01) collisionFound = true;

@@ -58,12 +58,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 1924756076481173795}
     m_Modifications:
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2803683555282336689, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.r
@@ -71,7 +75,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7187339843482450361, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Name
-      value: RedTile
+      value: Tile2
       objectReference: {fileID: 0}
     - target: {fileID: 7502689166180737463, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_RootOrder
@@ -131,9 +135,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1924756076481173795}
     m_Modifications:
+    - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2803683555282336689, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7187339843482450361, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Name
-      value: WhiteTile
+      value: Tile1
       objectReference: {fileID: 0}
     - target: {fileID: 7502689166180737463, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_RootOrder
@@ -198,20 +218,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 1924756076481173795}
     m_Modifications:
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2803683555282336689, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.b
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.r
-      value: 0.0027666092
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7187339843482450361, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Name
-      value: BlueTile
+      value: Tile4
       objectReference: {fileID: 0}
     - target: {fileID: 7502689166180737463, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_RootOrder
@@ -272,8 +296,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 1924756076481173795}
     m_Modifications:
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2803683555282336689, guid: 245cfe7b361a9ef40aca5b6724da453b, type: 3}
+    - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.g
@@ -281,11 +309,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5114354967584514047, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Color.r
-      value: 0.042459726
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7187339843482450361, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_Name
-      value: GreenTile
+      value: Tile3
       objectReference: {fileID: 0}
     - target: {fileID: 7502689166180737463, guid: cc4aaf9e96fe5e846bab77b3c55e98f8, type: 3}
       propertyPath: m_RootOrder
