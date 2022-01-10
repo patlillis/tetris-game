@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class FallingPiece : MonoBehaviour
 {
     public struct MoveState : System.IFormattable
@@ -30,6 +31,8 @@ public class FallingPiece : MonoBehaviour
         CounterClockwise
     }
 
+    public const string GHOST_PIECE_NAME = "Ghost";
+
     // This is set dynamically via GameManager.
     [HideInInspector]
     public PieceData PieceData;
@@ -38,15 +41,19 @@ public class FallingPiece : MonoBehaviour
     private MoveState _dropState;
     private MoveState _moveRightState;
     private MoveState _moveLeftState;
+    // TODO: better floor-kick detection?
     private bool _hasFloorKicked;
+    private GameObject _ghostPiece;
 
     // Start is called before the first frame update.
     void Start()
     {
-        Debug.Log("FallingPiece.Start");
         _gameManager = FindObjectOfType<GameManager>();
         // Use spawn time as initial "last dropped time" so that it doesn't drop immediately upon spawning.
         _dropState = new MoveState(Time.fixedTime, isMovingContinuously: false);
+        _ghostPiece = Instantiate(this.gameObject, Vector3.zero, Quaternion.identity, this.transform);
+        _ghostPiece.name = GHOST_PIECE_NAME;
+        Destroy(_ghostPiece.GetComponent<FallingPiece>());
     }
 
     // Update is called once per frame
@@ -104,6 +111,8 @@ public class FallingPiece : MonoBehaviour
                 _dropState.lastMoveTime = Time.fixedTime;
             }
         }
+
+        UpdateGhostPiecePosition();
     }
 
     private (MoveState moveState, bool shouldMove) CheckMovementInput(Control moveControl, MoveState currentMoveState)
@@ -131,6 +140,29 @@ public class FallingPiece : MonoBehaviour
 
         // Don't move, but keep old "lastMoveTime", since they are still holding down the key, 
         return (currentMoveState, shouldMove: false);
+    }
+
+    // Update ghost piece (or hide if it's in the same position as the main
+    // piece).
+    private void UpdateGhostPiecePosition()
+    {
+        for (int y = 1; y < Constants.BOARD_HEIGHT + 2; y++)
+        {
+            var movement = new Vector2(0, -y);
+            if (CheckMovementCollision(movement))
+            {
+                if (y == 1)
+                {
+                    _ghostPiece.SetActive(false);
+                }
+                else
+                {
+                    // _ghostPiece.SetActive(true);
+                    _ghostPiece.transform.position = this.transform.position + new Vector3(0, -y + 1, 0);
+                }
+                break;
+            }
+        }
     }
 
     private void TryRotatingPiece(RotationType rotationType)
@@ -291,10 +323,14 @@ public class FallingPiece : MonoBehaviour
         // This probably isn't super efficient, but there's not that many pieces...
         foreach (SpriteRenderer pieceTile in GetComponentsInChildren<SpriteRenderer>())
         {
+            // Don't want to consider ghost pieces in collision. (Probably a
+            // better way to do this ¯\_(ツ)_/¯).
+            if (pieceTile.gameObject.transform.parent.name == GHOST_PIECE_NAME) continue;
+
             Vector2 tilePosition = pieceTile.transform.position;
-            if (tilePosition.y < -Constants.BOARD_HEIGHT + 0.99) collisionFound = true;
+            if (tilePosition.y < -Constants.BOARD_HEIGHT + 0.9) collisionFound = true;
             if (tilePosition.x < -0.01) collisionFound = true;
-            if (tilePosition.x > Constants.BOARD_WIDTH - 0.99) collisionFound = true;
+            if (tilePosition.x > Constants.BOARD_WIDTH - 0.9) collisionFound = true;
 
             foreach (GameObject fallenTile in _gameManager.FallenTiles)
             {

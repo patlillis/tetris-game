@@ -94,6 +94,7 @@ public class GameManager : MonoBehaviour
                             new Vector2(Constants.BOARD_WIDTH / 2 - 1, 0) + pieceData.SpawnPositionOffset,
                             Quaternion.identity,
                             this.transform);
+        fallingPiece.name = $"FallingPiece";
         fallingPiece.AddComponent<FallingPiece>();
         fallingPiece.GetComponent<FallingPiece>().PieceData = pieceData;
 
@@ -105,6 +106,7 @@ public class GameManager : MonoBehaviour
                             new Vector2(15, -3.75f - (2.75f * i)) + _randomPrefabsBag[i].GetComponent<PieceData>().VisualCenterOffset,
                             Quaternion.identity,
                             this.transform);
+            _nextPieces[i].name = $"NextPiece{i + 1}";
         }
     }
 
@@ -112,10 +114,15 @@ public class GameManager : MonoBehaviour
     {
         foreach (SpriteRenderer pieceTile in piece.GetComponentsInChildren<SpriteRenderer>())
         {
-            var newTile = Instantiate(TilePrefab, pieceTile.transform.position, pieceTile.transform.rotation, this.transform);
+            if (pieceTile.gameObject.transform.parent.name == FallingPiece.GHOST_PIECE_NAME) continue;
+
             var x = Mathf.RoundToInt(pieceTile.transform.position.x);
             var y = Mathf.RoundToInt(pieceTile.transform.position.y);
+            // TODO: These tiles sometimes have weird itty-bitty offsets applied to their position?
+            var newTile = Instantiate(TilePrefab, new Vector3(x, y, 0), pieceTile.transform.rotation, this.transform);
+            newTile.name = $"FallenTile[{x},{y}]";
             _fallenTileGrid[x, -y] = newTile;
+            // Debug.Log($"Adding new fallen tile at [{x}, {y}] with position {newTile.transform.position}");
         }
         Destroy(piece);
 
