@@ -32,7 +32,7 @@ public class FallingPiece : MonoBehaviour
     }
 
     public const string GHOST_PIECE_NAME = "Ghost";
-    private const float GHOST_PIECE_ALPHA = 0.3f;
+    private const float GHOST_PIECE_ALPHA = 0.2f;
 
     // This is set dynamically via GameManager.
     [HideInInspector]
@@ -163,10 +163,6 @@ public class FallingPiece : MonoBehaviour
                 else
                 {
                     _ghostPiece.transform.position = this.transform.position + new Vector3(0, -y + 1, 0);
-                    foreach (SpriteRenderer sprite in _ghostPiece.GetComponentsInChildren<SpriteRenderer>())
-                    {
-                        sprite.transform.rotation = Quaternion.Euler(0, 0, -this.transform.rotation.eulerAngles.z);
-                    }
                 }
                 break;
             }
@@ -199,28 +195,27 @@ public class FallingPiece : MonoBehaviour
     }
 
     // Properly filters out ghost sprites. (Probably a better way to do this ¯\_(ツ)_/¯).
-    public List<SpriteRenderer> GetChildSprites()
+    public List<SpriteRenderer> GetChildSprites(bool includeGhostSprites = false)
     {
         // Don't want to consider ghost pieces in collision. 
         return new List<SpriteRenderer>(GetComponentsInChildren<SpriteRenderer>())
-                        .FindAll(sprite => sprite.gameObject.transform.parent.name != GHOST_PIECE_NAME);
+                        .FindAll(sprite => includeGhostSprites || sprite.gameObject.transform.parent.name != GHOST_PIECE_NAME);
     }
 
     // Wall kick offset values taken from https://tetris.wiki/Super_Rotation_System#Wall_Kicks.
-    // TODO: I Piece wallkick when vertical seems to send it too far infield?
     private Vector2[] GetWallKickOffsets(RotationType rotationType)
     {
-        return (this.PieceData.WallKickType, this.transform.rotation.eulerAngles.y, rotationType) switch
+        return (this.PieceData.WallKickType, this.transform.rotation.eulerAngles.z, rotationType) switch
         {
             /* J, L, S, T, Z PIECE WALL KICK OFFSETS */
             // 0->R
             (WallKickTypes.JLSTZ, 0, RotationType.Clockwise) =>
                 new Vector2[] { new Vector2(0, 0), new Vector2(-1, 0), new Vector2(-1, 1), new Vector2(0, -2), new Vector2(-1, -2) },
             // R->0
-            (WallKickTypes.JLSTZ, -90, RotationType.CounterClockwise) =>
+            (WallKickTypes.JLSTZ, 270, RotationType.CounterClockwise) =>
                 new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, -1), new Vector2(0, 2), new Vector2(1, 2) },
             // R->2
-            (WallKickTypes.JLSTZ, -90, RotationType.Clockwise) =>
+            (WallKickTypes.JLSTZ, 270, RotationType.Clockwise) =>
                 new Vector2[] { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, -1), new Vector2(0, 2), new Vector2(1, 2) },
             // 2->R
             (WallKickTypes.JLSTZ, 180, RotationType.CounterClockwise) =>
@@ -243,10 +238,10 @@ public class FallingPiece : MonoBehaviour
             (WallKickTypes.I, 0, RotationType.Clockwise) =>
                 new Vector2[] { new Vector2(0, 0), new Vector2(-2, 0), new Vector2(1, 0), new Vector2(-2, -1), new Vector2(1, 2) },
             // R->0
-            (WallKickTypes.I, -90, RotationType.CounterClockwise) =>
+            (WallKickTypes.I, 270, RotationType.CounterClockwise) =>
                 new Vector2[] { new Vector2(0, 0), new Vector2(2, 0), new Vector2(-1, 0), new Vector2(2, 1), new Vector2(-1, -2) },
             // R->2
-            (WallKickTypes.I, -90, RotationType.Clockwise) =>
+            (WallKickTypes.I, 270, RotationType.Clockwise) =>
                 new Vector2[] { new Vector2(0, 0), new Vector2(-1, 0), new Vector2(2, 0), new Vector2(-1, 2), new Vector2(2, -1) },
             // 2->R
             (WallKickTypes.I, 180, RotationType.CounterClockwise) =>
@@ -310,9 +305,9 @@ public class FallingPiece : MonoBehaviour
             // (This is probably a sign that having pieces as whole game objects
             // with actual rotations, instead of managing tiles programmatically
             // is probably not a great way to approach things, but whatever...)
-            foreach (SpriteRenderer sprite in GetChildSprites())
+            foreach (SpriteRenderer sprite in GetChildSprites(includeGhostSprites: true))
             {
-                sprite.transform.rotation = Quaternion.Euler(0, 0, -transform.rotation.eulerAngles.z);
+                sprite.transform.rotation = Quaternion.identity;
             }
 
             return true;
