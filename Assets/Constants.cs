@@ -6,7 +6,11 @@ public static class Constants
     // Taken from Tetris Guideline https://tetris.wiki/Marathon.
     public static float DROP_TIME_FOR_LEVEL(int level)
     {
-        return Mathf.Pow(0.8f - ((level - 1) * 0.007f), level - 1);
+        // Gravity calculation is really only used for levels 1-20. If less than
+        // 1, use level 1's gravity. If greather than 20, use level 20's gravity.
+        int clampedLevel = Mathf.Clamp(level, 1, 20);
+
+        return Mathf.Pow(0.8f - ((clampedLevel - 1) * 0.007f), clampedLevel - 1);
     }
 
     // DAS values taken from Tetris Guideline https://tetris.wiki/Tetris_Guideline.
