@@ -62,6 +62,7 @@ public class FallingPiece : MonoBehaviour
     }
 
     // Update is called once per frame
+    // TODO: this class really shouldn't be handling user input...
     void Update()
     {
         // Try moving left.
@@ -93,22 +94,24 @@ public class FallingPiece : MonoBehaviour
         }
 
         // Hard drop.
-        bool hardDropped = false;
+        bool dropped = false;
         if (GameInput.GetControlDown(Control.HardDrop))
         {
             Vector2 movement = GetHardDropMovement();
             ApplyMovementIfValid(movement);
             _gameManager.AddFallingPieceToFallenTiles();
+            dropped = true;
         }
 
         // Soft drop.
         (MoveState newDropState, bool shouldDrop) = CheckMovementInput(Control.SoftDrop, _dropState);
         _dropState = newDropState;
-        if (!hardDropped && (shouldDrop || (Time.fixedTime - _dropState.lastMoveTime > Constants.TIME_BETWEEN_DROPS)))
+        if (!dropped && (shouldDrop || (Time.fixedTime - _dropState.lastMoveTime > Constants.TIME_BETWEEN_DROPS)))
         {
             if (CheckMovementCollision(new Vector2(0, -1)))
             {
                 _gameManager.AddFallingPieceToFallenTiles();
+                dropped = true;
             }
             else
             {
@@ -117,6 +120,14 @@ public class FallingPiece : MonoBehaviour
             }
         }
 
+        // Hold piece.
+        if (!dropped && GameInput.GetControlDown(Control.Hold))
+        {
+            _gameManager.TryHoldPiece();
+        }
+
+        // Make sure that whatever movement/rotation happened, is also applied
+        // to the ghost piece.
         UpdateGhostPiecePosition();
     }
 

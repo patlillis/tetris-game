@@ -35,8 +35,16 @@ public class GameManager : MonoBehaviour
     private GameObject[,] _fallenTileGrid;
     private List<GameObject> _randomPrefabsBag;
     private GameObject[] _nextPieces;
+
+    // IDK if there's a better way than tracking the prefabs? But makes it so we
+    // can swap back and forth between falling piece and hold piece.
     private GameObject _fallingPiece;
+    private GameObject _fallingPiecePrefab;
     private GameObject _holdPiece;
+    private GameObject _holdPiecePrefab;
+
+    // Lets us make sure the user can't hold a piece back and forth multiple
+    // times.
     private bool _hasPieceBeenHeld;
 
     private int _score = 0;
@@ -76,7 +84,8 @@ public class GameManager : MonoBehaviour
     {
     }
 
-    private void SpawnNewPiece()
+    // If prefabToSpawn is null, will pull from the random bag.
+    private void SpawnNewPiece(GameObject prefabToSpawn = null)
     {
         // If random bag doesn't have enough pieces, re-seed.
         if (_randomPrefabsBag.Count < Constants.NEXT_PIECES_COUNT + 1)
@@ -88,28 +97,34 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // Spawn next piece in the bag.
-        GameObject piecePrefab = _randomPrefabsBag[0];
-        _randomPrefabsBag.RemoveAt(0);
-        PieceData pieceData = piecePrefab.GetComponent<PieceData>();
-        _fallingPiece = Instantiate(piecePrefab,
+        // Grab next piece from the bag, if no prefab was passed in.
+        if (prefabToSpawn == null)
+        {
+            prefabToSpawn = _randomPrefabsBag[0];
+            _randomPrefabsBag.RemoveAt(0);
+
+            // Update next pieces.
+            for (int i = 0; i < Constants.NEXT_PIECES_COUNT; i++)
+            {
+                if (_nextPieces[i] != null) Destroy(_nextPieces[i]);
+                _nextPieces[i] = Instantiate(_randomPrefabsBag[i],
+                                new Vector2(15, -3.75f - (2.75f * i)) + _randomPrefabsBag[i].GetComponent<PieceData>().VisualCenterOffset,
+                                Quaternion.identity,
+                                this.transform);
+                _nextPieces[i].name = $"NextPiece{i + 1}";
+            }
+        }
+
+        // Actually spawn the piece! This is like the whole point of the function.
+        PieceData pieceData = prefabToSpawn.GetComponent<PieceData>();
+        _fallingPiecePrefab = prefabToSpawn;
+        _fallingPiece = Instantiate(prefabToSpawn,
                             new Vector2(Constants.BOARD_WIDTH / 2 - 1, 0) + pieceData.SpawnPositionOffset,
                             Quaternion.identity,
                             this.transform);
         _fallingPiece.name = $"FallingPiece";
         _fallingPiece.AddComponent<FallingPiece>();
         _fallingPiece.GetComponent<FallingPiece>().PieceData = pieceData;
-
-        // Update next pieces.
-        for (int i = 0; i < Constants.NEXT_PIECES_COUNT; i++)
-        {
-            if (_nextPieces[i] != null) Destroy(_nextPieces[i]);
-            _nextPieces[i] = Instantiate(_randomPrefabsBag[i],
-                            new Vector2(15, -3.75f - (2.75f * i)) + _randomPrefabsBag[i].GetComponent<PieceData>().VisualCenterOffset,
-                            Quaternion.identity,
-                            this.transform);
-            _nextPieces[i].name = $"NextPiece{i + 1}";
-        }
 
         // User is now allowed to hold piece again.
         _hasPieceBeenHeld = false;
@@ -134,6 +149,7 @@ public class GameManager : MonoBehaviour
         }
         Destroy(_fallingPiece);
         _fallingPiece = null;
+        _fallingPiecePrefab = null;
 
         // Check each line to see whether it's full.
         var fullLineYCoordinates = new List<int>();
@@ -224,29 +240,39 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
-    // If the current piece has already been held, this won't do anything.
+    // Tries to hold the current piece.
+    // May not be able to, for example if the user has already held the
+    // current piece.
     public void TryHoldPiece()
     {
         if (_hasPieceBeenHeld) return;
 
-        if (_holdPiece == null)
-        {
-            _holdPiece = _fallingPiece;
-            _fallingPiece = null;
-            // TODO: set _holdPiece position.
+        GameObject oldHoldPiecePrefab = _holdPiecePrefab;
 
-            _holdPiece.transform.position = new Vector2(3, -2.75f) + _fallingPiece.GetComponent<PieceData>().VisualCenterOffset;
-            _holdPiece.transform.rotation = Quaternion.identity;
-            _nextPieces[i] = Instantiate(_randomPrefabsBag[i],
-                            new Vector2(15, -3.75f - (2.75f * i)) + _randomPrefabsBag[i].GetComponent<PieceData>().VisualCenterOffset,
-                            Quaternion.identity,
-                            this.transform);
-            _nextPieces[i].name = $"NextPiece{i + 1}";
-            SpawnNewPiece();
-        }
-        else
-        {
+        // Destroy old hold piece.
+        Destroy(_holdPiece);
+        _holdPiece = null;
 
-        }
+        // Set up hold piece.
+        _holdPiecePrefab = _fallingPiecePrefab;
+        _holdPiece = Instantiate(_holdPiecePrefab,
+                                 new Vector3(-7f, -3.75f, 0) + (Vector3)_holdPiecePrefab.GetComponent<PieceData>().VisualCenterOffset,
+                                 Quaternion.identity,
+                                 this.transform);
+        _holdPiece.name = "HoldPiece";
+
+        // Destroy old falling piece.
+        Destroy(_fallingPiece);
+        _fallingPiece = null;
+        _fallingPiecePrefab = null;
+
+        // Set up new falling piece.
+        // If there was no piece previously held, this will grab a new piece
+        // from the random bag.
+        SpawnNewPiece(oldHoldPiecePrefab);
+
+        // Make sure user can't re-hold until after they put the current piece
+        // down.
+        _hasPieceBeenHeld = true;
     }
 }
