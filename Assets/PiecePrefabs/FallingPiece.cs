@@ -98,7 +98,7 @@ public class FallingPiece : MonoBehaviour
         {
             Vector2 movement = GetHardDropMovement();
             ApplyMovementIfValid(movement);
-            _gameManager.AddPieceToFallenTiles(this.gameObject);
+            _gameManager.AddFallingPieceToFallenTiles();
         }
 
         // Soft drop.
@@ -108,7 +108,7 @@ public class FallingPiece : MonoBehaviour
         {
             if (CheckMovementCollision(new Vector2(0, -1)))
             {
-                _gameManager.AddPieceToFallenTiles(this.gameObject);
+                _gameManager.AddFallingPieceToFallenTiles();
             }
             else
             {

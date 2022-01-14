@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
     private GameObject[,] _fallenTileGrid;
     private List<GameObject> _randomPrefabsBag;
     private GameObject[] _nextPieces;
+    private GameObject _fallingPiece;
+    private GameObject _holdPiece;
+    private bool _hasPieceBeenHeld;
 
     private int _score = 0;
     public int Score
@@ -89,13 +92,13 @@ public class GameManager : MonoBehaviour
         GameObject piecePrefab = _randomPrefabsBag[0];
         _randomPrefabsBag.RemoveAt(0);
         PieceData pieceData = piecePrefab.GetComponent<PieceData>();
-        var fallingPiece = Instantiate(piecePrefab,
+        _fallingPiece = Instantiate(piecePrefab,
                             new Vector2(Constants.BOARD_WIDTH / 2 - 1, 0) + pieceData.SpawnPositionOffset,
                             Quaternion.identity,
                             this.transform);
-        fallingPiece.name = $"FallingPiece";
-        fallingPiece.AddComponent<FallingPiece>();
-        fallingPiece.GetComponent<FallingPiece>().PieceData = pieceData;
+        _fallingPiece.name = $"FallingPiece";
+        _fallingPiece.AddComponent<FallingPiece>();
+        _fallingPiece.GetComponent<FallingPiece>().PieceData = pieceData;
 
         // Update next pieces.
         for (int i = 0; i < Constants.NEXT_PIECES_COUNT; i++)
@@ -107,15 +110,19 @@ public class GameManager : MonoBehaviour
                             this.transform);
             _nextPieces[i].name = $"NextPiece{i + 1}";
         }
+
+        // User is now allowed to hold piece again.
+        _hasPieceBeenHeld = false;
     }
 
-    public void AddPieceToFallenTiles(GameObject piece)
+    public void AddFallingPieceToFallenTiles()
     {
-        foreach (SpriteRenderer pieceTile in piece.GetComponent<FallingPiece>().GetChildSprites())
+        foreach (SpriteRenderer pieceTile in _fallingPiece.GetComponent<FallingPiece>().GetChildSprites())
         {
             var x = Mathf.RoundToInt(pieceTile.transform.position.x);
             var y = Mathf.RoundToInt(pieceTile.transform.position.y);
             // TODO: These tiles sometimes have weird itty-bitty offsets applied to their position?
+            // This makes collision detection not work, so the falling piece goes right through the already-fallen tiles.
             var newTile = new GameObject($"FallenTile[{x},{y}]", typeof(SpriteRenderer));
             newTile.transform.position = new Vector3(x, y, 0);
             newTile.transform.parent = this.transform;
@@ -125,7 +132,8 @@ public class GameManager : MonoBehaviour
             _fallenTileGrid[x, -y] = newTile;
             // Debug.Log($"Adding new fallen tile at [{x}, {y}] with position {newTile.transform.position}");
         }
-        Destroy(piece);
+        Destroy(_fallingPiece);
+        _fallingPiece = null;
 
         // Check each line to see whether it's full.
         var fullLineYCoordinates = new List<int>();
@@ -145,9 +153,9 @@ public class GameManager : MonoBehaviour
 
         // Remove any full lines, move other lines down, and spawn a new piece,
         StartCoroutine(RemoveLinesAndSpawnPiece(fullLineYCoordinates));
-
     }
 
+    // This is a co-routine because the flashing needs to happen over multiple frames.
     IEnumerator RemoveLinesAndSpawnPiece(List<int> yCoordinates)
     {
         if (yCoordinates.Count > 0)
@@ -214,5 +222,31 @@ public class GameManager : MonoBehaviour
         SpawnNewPiece();
 
         yield return null;
+    }
+
+    // If the current piece has already been held, this won't do anything.
+    public void TryHoldPiece()
+    {
+        if (_hasPieceBeenHeld) return;
+
+        if (_holdPiece == null)
+        {
+            _holdPiece = _fallingPiece;
+            _fallingPiece = null;
+            // TODO: set _holdPiece position.
+
+            _holdPiece.transform.position = new Vector2(3, -2.75f) + _fallingPiece.GetComponent<PieceData>().VisualCenterOffset;
+            _holdPiece.transform.rotation = Quaternion.identity;
+            _nextPieces[i] = Instantiate(_randomPrefabsBag[i],
+                            new Vector2(15, -3.75f - (2.75f * i)) + _randomPrefabsBag[i].GetComponent<PieceData>().VisualCenterOffset,
+                            Quaternion.identity,
+                            this.transform);
+            _nextPieces[i].name = $"NextPiece{i + 1}";
+            SpawnNewPiece();
+        }
+        else
+        {
+
+        }
     }
 }
