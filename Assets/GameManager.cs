@@ -47,6 +47,13 @@ public class GameManager : MonoBehaviour
     // times.
     private bool _hasPieceBeenHeld;
 
+    public float DropTimeForCurrentLevel
+    {
+        get { return _dropTimeForCurrentLevel; }
+    }
+    // Initialize to drop time for level 1.
+    private float _dropTimeForCurrentLevel = Constants.DROP_TIME_FOR_LEVEL(1);
+
     private int _score = 0;
     public int Score
     {
@@ -57,7 +64,13 @@ public class GameManager : MonoBehaviour
     public int Level
     {
         get { return _level; }
-        set { _level = value; LevelText.text = _level.ToString(); }
+        set
+        {
+            if (_level != value) _dropTimeForCurrentLevel = Constants.DROP_TIME_FOR_LEVEL(value);
+            LevelText.text = value.ToString();
+
+            _level = value;
+        }
     }
     private int _lines = 0;
     public int Lines

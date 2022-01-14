@@ -106,7 +106,7 @@ public class FallingPiece : MonoBehaviour
         // Soft drop.
         (MoveState newDropState, bool shouldDrop) = CheckMovementInput(Control.SoftDrop, _dropState);
         _dropState = newDropState;
-        if (!dropped && (shouldDrop || (Time.fixedTime - _dropState.lastMoveTime > Constants.TIME_BETWEEN_DROPS)))
+        if (!dropped && (shouldDrop || (Time.fixedTime - _dropState.lastMoveTime > _gameManager.DropTimeForCurrentLevel)))
         {
             if (CheckMovementCollision(new Vector2(0, -1)))
             {
@@ -143,13 +143,13 @@ public class FallingPiece : MonoBehaviour
         }
         // If key is held down, need to hold down for a certain threshold before the piece starts moving.
         else if (!currentMoveState.isMovingContinuously &&
-                (Time.fixedTime - currentMoveState.lastMoveTime > Constants.TIME_BEFORE_CONTINUOUS_MOVE))
+                (Time.fixedTime - currentMoveState.lastMoveTime > Constants.AUTO_SHIFT_DELAY_SECONDS))
         {
             return (new MoveState(Time.fixedTime, isMovingContinuously: true), shouldMove: true);
         }
         // They've held the key down over initial threshold, now just dispatch moves every couple frames.
         else if (currentMoveState.isMovingContinuously &&
-                (Time.fixedTime - currentMoveState.lastMoveTime > Constants.TIME_BETWEEN_MOVES))
+                (Time.fixedTime - currentMoveState.lastMoveTime > Constants.AUTO_REPEAT_RATE_SECONDS))
         {
             return (new MoveState(Time.fixedTime, isMovingContinuously: true), shouldMove: true);
         }
