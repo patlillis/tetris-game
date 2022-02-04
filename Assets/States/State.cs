@@ -4,6 +4,8 @@ using UnityEngine;
 
 public enum States
 {
+    // This isn't actually a real state, it's just the entry point of the game.
+    Startup,
     MainMenu,
     Gameplay
 }

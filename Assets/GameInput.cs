@@ -10,7 +10,8 @@ public enum Control
     Hold,
     Pause,
     MoveLeft,
-    MoveRight
+    MoveRight,
+    Quit
 };
 
 public static class GameInput
@@ -26,6 +27,7 @@ public static class GameInput
           { Control.Pause, new KeyCode[] { KeyCode.Escape,KeyCode.F1}},
           { Control.MoveLeft, new KeyCode[] { KeyCode.LeftArrow,KeyCode.Keypad4}},
           { Control.MoveRight, new KeyCode[] { KeyCode.RightArrow,KeyCode.Keypad6}},
+          { Control.Quit, new KeyCode[] { KeyCode.Escape}}
       };
 
     public static bool GetControl(Control control)

@@ -8,12 +8,14 @@ public class GameplayState : State
 {
     public override void OnStateEntered(States previousState)
     {
-        throw new System.NotImplementedException();
+        this.gameObject.SetActive(true);
+        SpawnNewPiece();
     }
 
     public override void OnStateExited(States nextState)
     {
-        throw new System.NotImplementedException();
+        ResetEverything();
+        this.gameObject.SetActive(false);
     }
 
     public List<GameObject> PiecePrefabs;
@@ -91,16 +93,19 @@ public class GameplayState : State
 
     void Awake()
     {
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
         _fallenTileGrid = new GameObject[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
         _randomPrefabsBag = new List<GameObject>(PiecePrefabs.Count);
         _nextPieces = new GameObject[Constants.NEXT_PIECES_COUNT];
-        SpawnNewPiece();
+
+        // Make sure everything is turned off.
+        ResetEverything();
     }
+
+    void Start()
+    {
+        this.gameObject.SetActive(false);
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -111,6 +116,11 @@ public class GameplayState : State
             TryHoldPiece();
         }
 
+        // Quit to main menu.
+        if (GameInput.GetControlDown(Control.Quit))
+        {
+            FindObjectOfType<GameManager>().GoToState(States.MainMenu);
+        }
     }
 
     // If prefabToSpawn is null, will pull from the random bag.
@@ -304,4 +314,40 @@ public class GameplayState : State
         // down.
         _hasPieceBeenHeld = true;
     }
+
+    private void ResetEverything()
+    {
+        Score = 0;
+        Level = 1;
+        Lines = 0;
+
+        // Clear fallen tiles.
+        for (int x = 0; x < _fallenTileGrid.GetLength(0); x++)
+        {
+            for (int y = 0; y < _fallenTileGrid.GetLength(1); y++)
+            {
+                if (_fallenTileGrid[x, y] != null) Destroy(_fallenTileGrid[x, y]);
+                _fallenTileGrid[x, y] = null;
+
+            }
+        }
+
+        // Clear falling piece and hold pieces.
+        _randomPrefabsBag.Clear();
+        for (int i = 0; i < _nextPieces.Length; i++)
+        {
+            if (_nextPieces[i] != null) Destroy(_nextPieces[i]);
+            _nextPieces[i] = null;
+
+        }
+
+        if (_fallingPiece != null) Destroy(_fallingPiece);
+        _fallingPiece = null;
+        _fallingPiecePrefab = null;
+        if (_holdPiece != null) Destroy(_holdPiece);
+        _holdPiece = null;
+        _holdPiecePrefab = null;
+        _hasPieceBeenHeld = false;
+    }
+
 }
