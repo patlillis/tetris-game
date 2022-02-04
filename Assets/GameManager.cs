@@ -95,6 +95,12 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Hold piece.
+        if (GameInput.GetControlDown(Control.Hold))
+        {
+            TryHoldPiece();
+        }
+
     }
 
     // If prefabToSpawn is null, will pull from the random bag.

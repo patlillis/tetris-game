@@ -111,19 +111,12 @@ public class FallingPiece : MonoBehaviour
             if (CheckMovementCollision(new Vector2(0, -1)))
             {
                 _gameManager.AddFallingPieceToFallenTiles();
-                dropped = true;
             }
             else
             {
                 ApplyMovementIfValid(new Vector2(0, -1));
                 _dropState.lastMoveTime = Time.fixedTime;
             }
-        }
-
-        // Hold piece.
-        if (!dropped && GameInput.GetControlDown(Control.Hold))
-        {
-            _gameManager.TryHoldPiece();
         }
 
         // Make sure that whatever movement/rotation happened, is also applied
