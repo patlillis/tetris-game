@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenuState : MonoBehaviour
+public class MainMenuState : State
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void OnStateEntered(States previousState)
     {
-        
+        throw new System.NotImplementedException();
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void OnStateExited(States nextState)
     {
-        
+        throw new System.NotImplementedException();
     }
 }

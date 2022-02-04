@@ -700,6 +700,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 432502626}
+  - component: {fileID: 432502627}
   m_Layer: 0
   m_Name: MainMenuState
   m_TagString: Untagged
@@ -721,6 +722,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &432502627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432502625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aafc96c27339eb44b83494836713b47e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &464758470
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,6 +1544,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1151422402}
+  - component: {fileID: 1151422403}
   m_Layer: 0
   m_Name: GameplayState
   m_TagString: Untagged
@@ -1557,6 +1571,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1151422403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151422401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3685858d86bb9cb4bbf02a61cba416fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PiecePrefabs:
+  - {fileID: 7649738292937500, guid: 398c211e362a9d44d8fcd0896feb55ba, type: 3}
+  - {fileID: 7649738292937500, guid: 7ca7e8648430d344d8eaa393c6fa8ab7, type: 3}
+  - {fileID: 8446654256357703689, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
+  - {fileID: 4845289525838198937, guid: 53a39c80d28718d4eaec81bda90e7b1a, type: 3}
+  - {fileID: 3082262963810053267, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
+  - {fileID: 1924756076481173820, guid: 69cebd97b3d9bcc418aff15e5f04bbb9, type: 3}
+  - {fileID: 3614959353704694745, guid: 2d1dfadc989e37c41a3007f8071365ab, type: 3}
+  ScoreText: {fileID: 75335915}
+  LevelText: {fileID: 1860809297}
+  LinesText: {fileID: 1558541331}
 --- !u!1 &1271171049
 GameObject:
   m_ObjectHideFlags: 0
@@ -2197,17 +2234,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa86a41f2265f9548ad3082636b4a7d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PiecePrefabs:
-  - {fileID: 1924756076481173820, guid: 69cebd97b3d9bcc418aff15e5f04bbb9, type: 3}
-  - {fileID: 7649738292937500, guid: 398c211e362a9d44d8fcd0896feb55ba, type: 3}
-  - {fileID: 8446654256357703689, guid: b57b925431ac2f241ac2ce20629ff670, type: 3}
-  - {fileID: 7649738292937500, guid: 7ca7e8648430d344d8eaa393c6fa8ab7, type: 3}
-  - {fileID: 3082262963810053267, guid: 3a6800f37132fdc4f99b5cd9125e4572, type: 3}
-  - {fileID: 3614959353704694745, guid: 2d1dfadc989e37c41a3007f8071365ab, type: 3}
-  - {fileID: 4845289525838198937, guid: 53a39c80d28718d4eaec81bda90e7b1a, type: 3}
-  ScoreText: {fileID: 75335915}
-  LevelText: {fileID: 1860809297}
-  LinesText: {fileID: 1558541331}
 --- !u!4 &1732852103
 Transform:
   m_ObjectHideFlags: 0

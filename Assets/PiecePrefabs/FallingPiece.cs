@@ -34,11 +34,11 @@ public class FallingPiece : MonoBehaviour
     public const string GHOST_PIECE_NAME = "Ghost";
     private const float GHOST_PIECE_ALPHA = 0.2f;
 
-    // This is set dynamically via GameManager.
+    // This is set dynamically via GameplayState manager.
     [HideInInspector]
     public PieceData PieceData;
 
-    private GameManager _gameManager;
+    private GameplayState _gameplayState;
     private MoveState _dropState;
     private MoveState _moveRightState;
     private MoveState _moveLeftState;
@@ -49,7 +49,7 @@ public class FallingPiece : MonoBehaviour
     // Start is called before the first frame update.
     void Start()
     {
-        _gameManager = FindObjectOfType<GameManager>();
+        _gameplayState = FindObjectOfType<GameplayState>();
         // Use spawn time as initial "last dropped time" so that it doesn't drop immediately upon spawning.
         _dropState = new MoveState(Time.fixedTime, isMovingContinuously: false);
         _ghostPiece = Instantiate(this.gameObject, Vector3.zero, Quaternion.identity, this.transform);
@@ -99,18 +99,18 @@ public class FallingPiece : MonoBehaviour
         {
             Vector2 movement = GetHardDropMovement();
             ApplyMovementIfValid(movement);
-            _gameManager.AddFallingPieceToFallenTiles();
+            _gameplayState.AddFallingPieceToFallenTiles();
             dropped = true;
         }
 
         // Soft drop.
         (MoveState newDropState, bool shouldDrop) = CheckMovementInput(Control.SoftDrop, _dropState);
         _dropState = newDropState;
-        if (!dropped && (shouldDrop || (Time.fixedTime - _dropState.lastMoveTime > _gameManager.DropTimeForCurrentLevel)))
+        if (!dropped && (shouldDrop || (Time.fixedTime - _dropState.lastMoveTime > _gameplayState.DropTimeForCurrentLevel)))
         {
             if (CheckMovementCollision(new Vector2(0, -1)))
             {
-                _gameManager.AddFallingPieceToFallenTiles();
+                _gameplayState.AddFallingPieceToFallenTiles();
             }
             else
             {
@@ -354,7 +354,7 @@ public class FallingPiece : MonoBehaviour
             if (tilePosition.x < -0.01) collisionFound = true;
             if (tilePosition.x > Constants.BOARD_WIDTH - 0.9) collisionFound = true;
 
-            foreach (GameObject fallenTile in _gameManager.FallenTiles)
+            foreach (GameObject fallenTile in _gameplayState.FallenTiles)
             {
                 if (fallenTile.transform.position == (Vector3)tilePosition)
                 {
