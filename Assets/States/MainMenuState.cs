@@ -2,23 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenuState : State
+public class MainMenuState : StateChangeHandler
 {
-    public override void OnStateEntered(States previousState)
+
+    public override void RegisterStateChangeHandlers(StateChangeRegistrar registrar)
     {
-        this.gameObject.SetActive(true);
+        // When entering main menu, set to active.
+        registrar.RegisterStateEnteredHandler(States.MainMenu, (States previousState) =>
+        {
+            this.gameObject.SetActive(true);
+        });
+
+        // When exiting main menu, set to inactive.
+        registrar.RegisterStateExitedHandler(States.MainMenu, (States nextState) =>
+        {
+            this.gameObject.SetActive(false);
+        });
     }
 
-    public override void OnStateExited(States nextState)
-    {
-        this.gameObject.SetActive(false);
-    }
-
+    // When play button is clicked, transition states.
     public void OnPlayButtonClicked()
     {
         FindObjectOfType<GameManager>().GoToState(States.Gameplay);
     }
 
+    // When exit button is clicked, quit everything.
     public void OnExitButtonClicked()
     {
 #if UNITY_EDITOR

@@ -4,18 +4,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class GameplayState : State
+public class GameplayState : StateChangeHandler
 {
-    public override void OnStateEntered(States previousState)
+    public override void RegisterStateChangeHandlers(StateChangeRegistrar registrar)
     {
-        this.gameObject.SetActive(true);
-        SpawnNewPiece();
-    }
+        // When going from main menu to gameplay, set to active and spawn new piece.
+        registrar.RegisterStateChangeHandler(States.MainMenu, States.Gameplay, () =>
+       {
+           // TODO: countdown
+           this.gameObject.SetActive(true);
+           SpawnNewPiece();
+       });
 
-    public override void OnStateExited(States nextState)
-    {
-        ResetEverything();
-        this.gameObject.SetActive(false);
+        // When going from gameplay to main menu, reset everything and set to inactive.
+        registrar.RegisterStateChangeHandler(States.Gameplay, States.MainMenu, () =>
+        {
+            ResetEverything();
+            this.gameObject.SetActive(false);
+        });
     }
 
     public List<GameObject> PiecePrefabs;

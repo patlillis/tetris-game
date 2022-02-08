@@ -9,14 +9,14 @@ public class GameManager : MonoBehaviour
 {
     private States _currentState = States.Startup;
 
-    private Dictionary<States, State> _stateObjects;
+    private readonly StateChangeRegistrar _stateChangeRegistrar = new StateChangeRegistrar();
 
     public void Awake()
     {
-        _stateObjects = new Dictionary<States, State>() {
-            { States.MainMenu, FindObjectOfType<MainMenuState>() },
-            { States.Gameplay, FindObjectOfType<GameplayState>() }
-        };
+        foreach (StateChangeHandler stateChangeHandler in FindObjectsOfType<StateChangeHandler>())
+        {
+            stateChangeHandler.RegisterStateChangeHandlers(_stateChangeRegistrar);
+        }
     }
 
     public void Start()
@@ -31,14 +31,7 @@ public class GameManager : MonoBehaviour
             throw new ArgumentException("Can't go to Startup state.");
         }
 
-        if (_stateObjects.TryGetValue(_currentState, out State currentStateObject) && currentStateObject != null)
-        {
-            currentStateObject.OnStateExited(newState);
-        }
-        if (_stateObjects.TryGetValue(newState, out State newStateObject) && newStateObject != null)
-        {
-            newStateObject.OnStateEntered(_currentState);
-        }
+        _stateChangeRegistrar.HandleStateChange(_currentState, newState);
         _currentState = newState;
     }
 }
