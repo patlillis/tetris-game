@@ -9,7 +9,7 @@ public class GameplayState : StateChangeHandler
     public override void RegisterStateChangeHandlers(StateChangeRegistrar registrar)
     {
         // When going from main menu to gameplay, set to active and spawn new piece.
-        registrar.RegisterStateChangeHandler(States.MainMenu, States.Gameplay, () =>
+        registrar.RegisterStateChangeHandler(State.MainMenu, State.Gameplay, () =>
        {
            // TODO: countdown
            this.gameObject.SetActive(true);
@@ -17,7 +17,7 @@ public class GameplayState : StateChangeHandler
        });
 
         // When going from gameplay to main menu, reset everything and set to inactive.
-        registrar.RegisterStateChangeHandler(States.Gameplay, States.MainMenu, () =>
+        registrar.RegisterStateChangeHandler(State.Gameplay, State.MainMenu, () =>
         {
             ResetEverything();
             this.gameObject.SetActive(false);
@@ -125,7 +125,7 @@ public class GameplayState : StateChangeHandler
         // Quit to main menu.
         if (GameInput.GetControlDown(Control.Quit))
         {
-            FindObjectOfType<GameManager>().GoToState(States.MainMenu);
+            FindObjectOfType<GameManager>().GoToState(State.MainMenu);
         }
     }
 

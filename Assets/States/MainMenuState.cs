@@ -8,13 +8,13 @@ public class MainMenuState : StateChangeHandler
     public override void RegisterStateChangeHandlers(StateChangeRegistrar registrar)
     {
         // When entering main menu, set to active.
-        registrar.RegisterStateEnteredHandler(States.MainMenu, (States previousState) =>
+        registrar.RegisterStateEnteredHandler(State.MainMenu, (State previousState) =>
         {
             this.gameObject.SetActive(true);
         });
 
         // When exiting main menu, set to inactive.
-        registrar.RegisterStateExitedHandler(States.MainMenu, (States nextState) =>
+        registrar.RegisterStateExitedHandler(State.MainMenu, (State nextState) =>
         {
             this.gameObject.SetActive(false);
         });
@@ -23,7 +23,7 @@ public class MainMenuState : StateChangeHandler
     // When play button is clicked, transition states.
     public void OnPlayButtonClicked()
     {
-        FindObjectOfType<GameManager>().GoToState(States.Gameplay);
+        FindObjectOfType<GameManager>().GoToState(State.Gameplay);
     }
 
     // When exit button is clicked, quit everything.

@@ -3,14 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum States
-{
-    Startup, // This isn't actually a real state, it's just the entry point of the game.
-    MainMenu,
-    Gameplay,
-    PauseMenu,
-}
-
 // Components should inherit from this to handle state change "events".
 //
 // They're not real C# Events, because Events don't really play super well with
@@ -27,24 +19,24 @@ public abstract class StateChangeHandler : MonoBehaviour
 // "RegisterStateChangeHandlers()" abstract method.
 public sealed class StateChangeRegistrar
 {
-    private readonly Dictionary<States, List<Action<States>>> stateExitedHandlers = new Dictionary<States, List<Action<States>>>();
-    private readonly Dictionary<(States, States), List<Action>> stateChangedHandlers = new Dictionary<(States, States), List<Action>>();
-    private readonly Dictionary<States, List<Action<States>>> stateEnteredHandlers = new Dictionary<States, List<Action<States>>>();
+    private readonly Dictionary<State, List<Action<State>>> stateExitedHandlers = new Dictionary<State, List<Action<State>>>();
+    private readonly Dictionary<(State, State), List<Action>> stateChangedHandlers = new Dictionary<(State, State), List<Action>>();
+    private readonly Dictionary<State, List<Action<State>>> stateEnteredHandlers = new Dictionary<State, List<Action<State>>>();
 
     // Registers a handler for when a specific state is exited. The handler
     // delegate will be called, passing in the state being entered as a param.
-    public void RegisterStateExitedHandler(States stateBeingExited, Action<States> handler)
+    public void RegisterStateExitedHandler(State stateBeingExited, Action<State> handler)
     {
         if (!stateExitedHandlers.ContainsKey(stateBeingExited))
         {
-            stateExitedHandlers[stateBeingExited] = new List<Action<States>>();
+            stateExitedHandlers[stateBeingExited] = new List<Action<State>>();
         }
         stateExitedHandlers[stateBeingExited].Add(handler);
     }
 
     // Registers a handler for when a specific state is transitioning to a
     // specific other state.
-    public void RegisterStateChangeHandler(States stateBeingExited, States stateBeingEntered, Action handler)
+    public void RegisterStateChangeHandler(State stateBeingExited, State stateBeingEntered, Action handler)
     {
         if (!stateChangedHandlers.ContainsKey((stateBeingExited, stateBeingEntered)))
         {
@@ -55,22 +47,22 @@ public sealed class StateChangeRegistrar
 
     // Registers a handler for when a specific state is entered. The handler
     // delegate will be called, passing in the state being exited as a param.
-    public void RegisterStateEnteredHandler(States stateBeingEntered, Action<States> handler)
+    public void RegisterStateEnteredHandler(State stateBeingEntered, Action<State> handler)
     {
         if (!stateEnteredHandlers.ContainsKey(stateBeingEntered))
         {
-            stateEnteredHandlers[stateBeingEntered] = new List<Action<States>>();
+            stateEnteredHandlers[stateBeingEntered] = new List<Action<State>>();
         }
         stateEnteredHandlers[stateBeingEntered].Add(handler);
     }
 
     // THIS SHOULD ONLY BE CALLED FROM GAME MANAGER!
-    public void HandleStateChange(States stateBeingExited, States stateBeingEntered)
+    public void HandleStateChange(State stateBeingExited, State stateBeingEntered)
     {
         // Call state exited handlers
         if (stateExitedHandlers.ContainsKey(stateBeingExited))
         {
-            foreach (Action<States> handler in stateExitedHandlers[stateBeingExited])
+            foreach (Action<State> handler in stateExitedHandlers[stateBeingExited])
             {
                 handler(stateBeingEntered);
             }
@@ -88,7 +80,7 @@ public sealed class StateChangeRegistrar
         // Then call state entered handlers.
         if (stateEnteredHandlers.ContainsKey(stateBeingEntered))
         {
-            foreach (Action<States> handler in stateEnteredHandlers[stateBeingEntered])
+            foreach (Action<State> handler in stateEnteredHandlers[stateBeingEntered])
             {
                 handler(stateBeingExited);
             }

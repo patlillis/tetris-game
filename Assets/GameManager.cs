@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    private States _currentState = States.Startup;
+    private State _currentState = State.Startup;
 
     private readonly StateChangeRegistrar _stateChangeRegistrar = new StateChangeRegistrar();
 
@@ -21,12 +21,12 @@ public class GameManager : MonoBehaviour
 
     public void Start()
     {
-        GoToState(States.MainMenu);
+        GoToState(State.MainMenu);
     }
 
-    public void GoToState(States newState)
+    public void GoToState(State newState)
     {
-        if (newState == States.Startup)
+        if (newState == State.Startup)
         {
             throw new ArgumentException("Can't go to Startup state.");
         }
