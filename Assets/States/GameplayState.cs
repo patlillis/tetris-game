@@ -8,16 +8,35 @@ public class GameplayState : StateChangeHandler
 {
     public override void RegisterStateChangeHandlers(StateChangeRegistrar registrar)
     {
+        // On game startup, hide gameplay stuff.
+        registrar.RegisterStateExitedHandler(State.Startup, (newState) =>
+        {
+            this.gameObject.SetActive(false);
+        });
+
         // When going from main menu to gameplay, set to active and spawn new piece.
         registrar.RegisterStateChangeHandler(State.MainMenu, State.Gameplay, () =>
-       {
-           // TODO: countdown
-           this.gameObject.SetActive(true);
-           SpawnNewPiece();
-       });
+        {
+            // TODO: countdown
+            this.gameObject.SetActive(true);
+            SpawnNewPiece();
+        });
 
-        // When going from gameplay to main menu, reset everything and set to inactive.
-        registrar.RegisterStateChangeHandler(State.Gameplay, State.MainMenu, () =>
+        // When going from gameplay to pause menu, pause game updates.
+        registrar.RegisterStateChangeHandler(State.Gameplay, State.PauseMenu, () =>
+        {
+            Pause();
+        });
+
+        // When going from pause menu back to gameplay, unpause game updates.
+        registrar.RegisterStateChangeHandler(State.PauseMenu, State.Gameplay, () =>
+        {
+            // TODO: countdown
+            Unpause();
+        });
+
+        // When going from pause menu to main menu, reset everything and set to inactive.
+        registrar.RegisterStateChangeHandler(State.PauseMenu, State.MainMenu, () =>
         {
             ResetEverything();
             this.gameObject.SetActive(false);
@@ -49,6 +68,9 @@ public class GameplayState : StateChangeHandler
             return result;
         }
     }
+
+    public static bool IsPaused { get { return _IsPaused; } }
+    private static bool _IsPaused = false;
 
     private GameObject[,] _fallenTileGrid;
     private List<GameObject> _randomPrefabsBag;
@@ -107,26 +129,38 @@ public class GameplayState : StateChangeHandler
         ResetEverything();
     }
 
-    void Start()
-    {
-        this.gameObject.SetActive(false);
-    }
-
 
     // Update is called once per frame
     void Update()
     {
-        // Hold piece.
-        if (GameInput.GetControlDown(Control.Hold))
-        {
-            TryHoldPiece();
-        }
 
-        // Quit to main menu.
-        if (GameInput.GetControlDown(Control.Quit))
+        // Hold piece.
+        if (!IsPaused)
         {
-            FindObjectOfType<GameManager>().GoToState(State.MainMenu);
+            if (GameInput.GetControlDown(Control.Hold))
+            {
+                TryHoldPiece();
+            }
+
+            // Pause game.
+            if (GameInput.GetControlDown(Control.Pause))
+            {
+                FindObjectOfType<GameManager>().GoToState(State.PauseMenu);
+            }
         }
+    }
+
+    private static void Pause()
+    {
+        _IsPaused = true;
+        Time.timeScale = 0;
+    }
+
+    private static void Unpause()
+    {
+
+        _IsPaused = false;
+        Time.timeScale = 1;
     }
 
     // If prefabToSpawn is null, will pull from the random bag.
@@ -354,6 +388,8 @@ public class GameplayState : StateChangeHandler
         _holdPiece = null;
         _holdPiecePrefab = null;
         _hasPieceBeenHeld = false;
-    }
 
+        // Make sure game is unpaused.
+        Unpause();
+    }
 }

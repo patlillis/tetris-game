@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class MainMenuState : StateChangeHandler
 {
-
     public override void RegisterStateChangeHandlers(StateChangeRegistrar registrar)
     {
+
+        // On game startup, make sure main menu is active..
+        registrar.RegisterStateExitedHandler(State.Startup, (newState) =>
+        {
+            this.gameObject.SetActive(true);
+        });
+
         // When entering main menu, set to active.
         registrar.RegisterStateEnteredHandler(State.MainMenu, (State previousState) =>
         {

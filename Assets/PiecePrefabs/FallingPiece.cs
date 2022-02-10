@@ -65,6 +65,8 @@ public class FallingPiece : MonoBehaviour
     // TODO: this class really shouldn't be handling user input...
     void Update()
     {
+        if (GameplayState.IsPaused) return;
+
         // Try moving left.
         if (!Input.GetKey(KeyCode.LeftArrow))
         {
