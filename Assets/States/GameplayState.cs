@@ -20,27 +20,33 @@ public class GameplayState : StateChangeHandler
             // TODO: countdown
             this.gameObject.SetActive(true);
             SpawnNewPiece();
+
+            StartCoroutine(GameOver(15));
         });
 
-        // When going from gameplay to pause menu, pause game updates.
-        registrar.RegisterStateChangeHandler(State.Gameplay, State.PauseMenu, () =>
+        // When exiting Gameplay (to either PauseMenu or GameOverMenu), pause
+        // game.
+        registrar.RegisterStateExitedHandler(State.Gameplay, (newState) =>
         {
             Pause();
         });
 
-        // When going from pause menu back to gameplay, unpause game updates.
-        registrar.RegisterStateChangeHandler(State.PauseMenu, State.Gameplay, () =>
-        {
-            // TODO: countdown
-            Unpause();
-        });
+        // When coming into Gameplay, unpause.
+        registrar.RegisterStateEnteredHandler(State.Gameplay, (oldState) =>
+       {
+           // TODO: countdown
+           Unpause();
+       });
 
-        // When going from pause menu to main menu, reset everything and set to inactive.
-        registrar.RegisterStateChangeHandler(State.PauseMenu, State.MainMenu, () =>
-        {
-            ResetEverything();
-            this.gameObject.SetActive(false);
-        });
+        // When going to main menu, reset everything and set to inactive.
+        registrar.RegisterStateEnteredHandler(State.MainMenu, (oldState) =>
+       {
+           if (this.gameObject.activeSelf)
+           {
+               ResetEverything();
+               this.gameObject.SetActive(false);
+           }
+       });
     }
 
     public List<GameObject> PiecePrefabs;
@@ -127,13 +133,19 @@ public class GameplayState : StateChangeHandler
 
         // Make sure everything is turned off.
         ResetEverything();
+
+    }
+
+    IEnumerator GameOver(int seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        FindObjectOfType<GameManager>().GoToState(State.GameOverMenu);
     }
 
 
     // Update is called once per frame
     void Update()
     {
-
         // Hold piece.
         if (!IsPaused)
         {
@@ -244,6 +256,7 @@ public class GameplayState : StateChangeHandler
         }
 
         Lines += fullLineYCoordinates.Count;
+        Score += fullLineYCoordinates.Count * 10;
         Level = (Lines / 10) + 1;
 
         // Remove any full lines, move other lines down, and spawn a new piece,

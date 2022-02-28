@@ -2,17 +2,19 @@
 /*
 State transition diagram:
 
-┌───────┐
-│Startup│
-└───┬───┘
-    │
-┌───▼─────┐ ┌────────┐
-│Main Menu├─►Gameplay│
-└──────▲──┘ └┐▲──────┘
-       │     ││
-     ┌─┴─────▼└─┐
-     │Pause Menu│
-     └──────────┘
+               ┌──────────────┐
+               │Game Over Menu│
+               └─┬─────▲──────┘
+                 │     │
+┌───────┐ ┌──────▼──┐ ┌┴───────┐
+│Startup├─►Main Menu├─►Gameplay│
+└───────┘ └──────▲──┘ └┐▲──────┘
+                 │     ││
+               ┌─┴─────▼└─┐
+               │Pause Menu│
+               └──────────┘
+
+https://asciiflow.com/#/share/eJyrVspLzE1VssorzcnRUcpJrEwtUrJSqo5RqohRsrI0sdSJUaoEsowsLICsktSKEiAnRkkBFTyasockFBOTh2mCO9AdCv5lqUUKvql5pbhUYUfTNhFpD9gMGA2UxuNIHLZNI6gCyXYgGVySWFRSWgDTvcs3MTMP5kOICMjjBcCQJ9tFmzBUkBceJIY5gfgMSCwtTiUjLpHdq1SrVAsAEtNkdg%3D%3D)
 
 */
 public enum State
@@ -21,4 +23,5 @@ public enum State
     MainMenu,
     Gameplay,
     PauseMenu,
+    GameOverMenu
 }

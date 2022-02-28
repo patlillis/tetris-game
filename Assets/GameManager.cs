@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     public void Awake()
     {
-        foreach (StateChangeHandler stateChangeHandler in FindObjectsOfType<StateChangeHandler>())
+        foreach (StateChangeHandler stateChangeHandler in FindObjectsOfType<StateChangeHandler>(true))
         {
             stateChangeHandler.RegisterStateChangeHandlers(_stateChangeRegistrar);
         }
@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
         {
             throw new ArgumentException("Can't go to Startup state.");
         }
+
 
         _stateChangeRegistrar.HandleStateChange(_currentState, newState);
         _currentState = newState;
