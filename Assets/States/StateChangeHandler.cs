@@ -23,36 +23,22 @@ public sealed class StateChangeRegistrar
     private readonly Dictionary<(State, State), List<Action>> stateChangedHandlers = new Dictionary<(State, State), List<Action>>();
     private readonly Dictionary<State, List<Action<State>>> stateEnteredHandlers = new Dictionary<State, List<Action<State>>>();
 
-    // Registers a handler for when a specific state is exited. The handler
-    // delegate will be called, passing in the state being entered as a param.
-    public void RegisterStateExitedHandler(State stateBeingExited, Action<State> handler)
-    {
-        if (!stateExitedHandlers.ContainsKey(stateBeingExited))
-        {
-            stateExitedHandlers[stateBeingExited] = new List<Action<State>>();
-        }
-        stateExitedHandlers[stateBeingExited].Add(handler);
-    }
-
     // Registers handler for when any of the specified states are being exited.
     // The handler delegate will be called, passing in the state being entered as a param.
     public void RegisterStateExitedHandler(State[] statesBeingExited, Action<State> handler)
     {
-        foreach (State state in statesBeingExited)
+        foreach (State stateBeingExited in statesBeingExited)
         {
-            this.RegisterStateExitedHandler(state, handler);
+            if (!stateExitedHandlers.ContainsKey(stateBeingExited))
+            {
+                stateExitedHandlers[stateBeingExited] = new List<Action<State>>();
+            }
+            stateExitedHandlers[stateBeingExited].Add(handler);
         }
     }
-
-    // Registers a handler for when a specific state is transitioning to a
-    // specific other state.
-    public void RegisterStateChangeHandler(State stateBeingExited, State stateBeingEntered, Action handler)
+    public void RegisterStateExitedHandler(State stateBeingExited, Action<State> handler)
     {
-        if (!stateChangedHandlers.ContainsKey((stateBeingExited, stateBeingEntered)))
-        {
-            stateChangedHandlers[(stateBeingExited, stateBeingEntered)] = new List<Action>();
-        }
-        stateChangedHandlers[(stateBeingExited, stateBeingEntered)].Add(handler);
+        this.RegisterStateExitedHandler(new State[] { stateBeingExited }, handler);
     }
 
     // Registers handler for when any of the "statesBeingExited" are transitioning
@@ -63,30 +49,43 @@ public sealed class StateChangeRegistrar
         {
             foreach (State stateBeingEntered in statesBeingEntered)
             {
-                this.RegisterStateChangeHandler(stateBeingExited, stateBeingEntered, handler);
+                if (!stateChangedHandlers.ContainsKey((stateBeingExited, stateBeingEntered)))
+                {
+                    stateChangedHandlers[(stateBeingExited, stateBeingEntered)] = new List<Action>();
+                }
+                stateChangedHandlers[(stateBeingExited, stateBeingEntered)].Add(handler);
             }
         }
     }
-
-    // Registers a handler for when a specific state is entered. The handler
-    // delegate will be called, passing in the state being exited as a param.
-    public void RegisterStateEnteredHandler(State stateBeingEntered, Action<State> handler)
+    public void RegisterStateChangeHandler(State stateBeingExited, State stateBeingEntered, Action handler)
     {
-        if (!stateEnteredHandlers.ContainsKey(stateBeingEntered))
-        {
-            stateEnteredHandlers[stateBeingEntered] = new List<Action<State>>();
-        }
-        stateEnteredHandlers[stateBeingEntered].Add(handler);
+        this.RegisterStateChangeHandler(new State[] { stateBeingExited }, new State[] { stateBeingEntered }, handler);
+    }
+    public void RegisterStateChangeHandler(State[] statesBeingExited, State stateBeingEntered, Action handler)
+    {
+        this.RegisterStateChangeHandler(statesBeingExited, new State[] { stateBeingEntered }, handler);
+    }
+    public void RegisterStateChangeHandler(State stateBeingExited, State[] statesBeingEntered, Action handler)
+    {
+        this.RegisterStateChangeHandler(new State[] { stateBeingExited }, statesBeingEntered, handler);
     }
 
     // Register handler for when any of the specified states are being entered.
     // The handler delegate will be called, passing in the state being exited as a param.
-    public void RegisterStatEnteredHandler(State[] statesBeingEntered, Action<State> handler)
+    public void RegisterStateEnteredHandler(State[] statesBeingEntered, Action<State> handler)
     {
-        foreach (State state in statesBeingEntered)
+        foreach (State stateBeingEntered in statesBeingEntered)
         {
-            this.RegisterStateEnteredHandler(state, handler);
+            if (!stateEnteredHandlers.ContainsKey(stateBeingEntered))
+            {
+                stateEnteredHandlers[stateBeingEntered] = new List<Action<State>>();
+            }
+            stateEnteredHandlers[stateBeingEntered].Add(handler);
         }
+    }
+    public void RegisterStateEnteredHandler(State stateBeingEntered, Action<State> handler)
+    {
+        this.RegisterStateEnteredHandler(new State[] { stateBeingEntered }, handler);
     }
 
     // THIS SHOULD ONLY BE CALLED FROM GAME MANAGER!

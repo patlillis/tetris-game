@@ -19,6 +19,7 @@ public class GameplayState : StateChangeHandler
         {
             // TODO: countdown
             this.gameObject.SetActive(true);
+            ResetEverything();
             SpawnNewPiece();
 
             StartCoroutine(GameOver(15));
@@ -38,15 +39,12 @@ public class GameplayState : StateChangeHandler
            Unpause();
        });
 
-        // When going to main menu, reset everything and set to inactive.
-        registrar.RegisterStateEnteredHandler(State.MainMenu, (oldState) =>
-       {
-           if (this.gameObject.activeSelf)
-           {
-               ResetEverything();
-               this.gameObject.SetActive(false);
-           }
-       });
+        // When going to main menu from sub-menus, reset everything and set to inactive.
+        registrar.RegisterStateChangeHandler(new State[] { State.GameOverMenu, State.PauseMenu }, State.MainMenu, () =>
+            {
+                ResetEverything();
+                this.gameObject.SetActive(false);
+            });
     }
 
     public List<GameObject> PiecePrefabs;
@@ -130,10 +128,6 @@ public class GameplayState : StateChangeHandler
         _fallenTileGrid = new GameObject[Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT];
         _randomPrefabsBag = new List<GameObject>(PiecePrefabs.Count);
         _nextPieces = new GameObject[Constants.NEXT_PIECES_COUNT];
-
-        // Make sure everything is turned off.
-        ResetEverything();
-
     }
 
     IEnumerator GameOver(int seconds)
