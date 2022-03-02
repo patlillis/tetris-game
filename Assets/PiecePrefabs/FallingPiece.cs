@@ -59,6 +59,7 @@ public class FallingPiece : MonoBehaviour
             sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, GHOST_PIECE_ALPHA);
         }
         Destroy(_ghostPiece.GetComponent<FallingPiece>());
+        UpdateGhostPiecePosition();
     }
 
     // Update is called once per frame
