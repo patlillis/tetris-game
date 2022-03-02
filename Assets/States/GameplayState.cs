@@ -21,8 +21,6 @@ public class GameplayState : StateChangeHandler
             this.gameObject.SetActive(true);
             ResetEverything();
             SpawnNewPiece();
-
-            StartCoroutine(GameOver(15));
         });
 
         // When exiting Gameplay (to either PauseMenu or GameOverMenu), pause
@@ -130,9 +128,8 @@ public class GameplayState : StateChangeHandler
         _nextPieces = new GameObject[Constants.NEXT_PIECES_COUNT];
     }
 
-    IEnumerator GameOver(int seconds)
+    void TriggerGameOver()
     {
-        yield return new WaitForSeconds(seconds);
         FindObjectOfType<GameManager>().GoToState(State.GameOverMenu);
     }
 
@@ -213,6 +210,25 @@ public class GameplayState : StateChangeHandler
 
         // User is now allowed to hold piece again.
         _hasPieceBeenHeld = false;
+
+        // Check whether newly-spawned piece is overlapping any blocks in the
+        // playfield, in which case GAME OVER.
+        bool overlappingPlayfield = false;
+        foreach (GameObject playfieldTile in FallenTiles)
+        {
+            Vector2 tilePosition = playfieldTile.transform.position;
+            foreach (SpriteRenderer pieceTile in _fallingPiece.GetComponent<FallingPiece>().GetChildSprites())
+            {
+                if (pieceTile.transform.position == (Vector3)tilePosition)
+                {
+                    overlappingPlayfield = true;
+                }
+            }
+        }
+        if (overlappingPlayfield)
+        {
+            TriggerGameOver();
+        }
     }
 
     public void AddFallingPieceToFallenTiles()
@@ -321,7 +337,17 @@ public class GameplayState : StateChangeHandler
             }
         }
 
-        SpawnNewPiece();
+        // TODO: check whether any pieces on the playfield are partially out
+        // of view. If so, GAME OVER ("partial lock out" condition).
+        bool partialLockOut = false;
+        if (partialLockOut)
+        {
+            TriggerGameOver();
+        }
+        else
+        {
+            SpawnNewPiece();
+        }
 
         yield return null;
     }
