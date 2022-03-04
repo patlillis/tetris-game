@@ -107,9 +107,9 @@ public class FallingPiece : MonoBehaviour
         }
 
         // Soft drop.
-        (MoveState newDropState, bool shouldDrop) = CheckMovementInput(Control.SoftDrop, _dropState);
+        (MoveState newDropState, bool shouldSoftDrop) = CheckMovementInput(Control.SoftDrop, _dropState);
         _dropState = newDropState;
-        if (!dropped && (shouldDrop || (Time.fixedTime - _dropState.lastMoveTime > _gameplayState.DropTimeForCurrentLevel)))
+        if (!dropped && (shouldSoftDrop || (Time.fixedTime - _dropState.lastMoveTime > _gameplayState.DropTimeForCurrentLevel)))
         {
             if (CheckMovementCollision(new Vector2(0, -1)))
             {
@@ -119,6 +119,10 @@ public class FallingPiece : MonoBehaviour
             {
                 ApplyMovementIfValid(new Vector2(0, -1));
                 _dropState.lastMoveTime = Time.fixedTime;
+                if (shouldSoftDrop)
+                {
+                    _gameplayState.UpdateScore(Constants.ScoreUpdateEvent.SoftDrop);
+                }
             }
         }
 
@@ -150,7 +154,7 @@ public class FallingPiece : MonoBehaviour
             return (new MoveState(Time.fixedTime, isMovingContinuously: true), shouldMove: true);
         }
 
-        // Don't move, but keep old "lastMoveTime", since they are still holding down the key, 
+        // Don't move, but keep old "lastMoveTime", since they are still holding down the key.
         return (currentMoveState, shouldMove: false);
     }
 

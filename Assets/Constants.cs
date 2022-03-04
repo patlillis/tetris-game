@@ -22,4 +22,9 @@ public static class Constants
     // Changing this would also require scene & UI update, but better to have the
     // number in one place so ¯\_(ツ)_/¯
     public static readonly int NEXT_PIECES_COUNT = 3;
+
+    public enum ScoreUpdateEvent
+    {
+        SoftDrop
+    }
 }

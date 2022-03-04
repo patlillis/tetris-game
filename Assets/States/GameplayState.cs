@@ -240,13 +240,13 @@ public class GameplayState : StateChangeHandler
             var x = Mathf.RoundToInt(pieceTile.transform.position.x);
             var y = Mathf.RoundToInt(pieceTile.transform.position.y);
 
-            if (y < 0) partialLockOut = true;
+            if (y > 0) partialLockOut = true;
 
             // TODO: These tiles sometimes have weird itty-bitty offsets applied to their position?
             // This makes collision detection not work, so the falling piece goes right through the already-fallen tiles.
             var newTile = new GameObject($"FallenTile[{x},{y}]", typeof(SpriteRenderer));
             newTile.transform.position = new Vector3(x, y, 0);
-            newTile.transform.parent = this.transform;
+            newTile.transform.parent = this.transform.Find("FallenTiles").transform;
             newTile.transform.rotation = pieceTile.transform.rotation;
             var spriteRenderer = newTile.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = pieceTile.sprite;
@@ -438,5 +438,19 @@ public class GameplayState : StateChangeHandler
 
         // Make sure game is unpaused.
         Unpause();
+    }
+
+    public void UpdateScore(Constants.ScoreUpdateEvent updateEvent)
+    {
+        switch (updateEvent)
+        {
+            case Constants.ScoreUpdateEvent.SoftDrop:
+                Score++;
+                break;
+
+            default:
+                Debug.Log($"Unhandled ScoreUpdateEvent: {updateEvent}");
+                break;
+        }
     }
 }
