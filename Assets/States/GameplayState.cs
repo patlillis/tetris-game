@@ -233,10 +233,15 @@ public class GameplayState : StateChangeHandler
 
     public void AddFallingPieceToFallenTiles()
     {
+        // Whether the falling piece locked partially out of screen.
+        bool partialLockOut = false;
         foreach (SpriteRenderer pieceTile in _fallingPiece.GetComponent<FallingPiece>().GetChildSprites())
         {
             var x = Mathf.RoundToInt(pieceTile.transform.position.x);
             var y = Mathf.RoundToInt(pieceTile.transform.position.y);
+
+            if (y < 0) partialLockOut = true;
+
             // TODO: These tiles sometimes have weird itty-bitty offsets applied to their position?
             // This makes collision detection not work, so the falling piece goes right through the already-fallen tiles.
             var newTile = new GameObject($"FallenTile[{x},{y}]", typeof(SpriteRenderer));
@@ -251,6 +256,14 @@ public class GameplayState : StateChangeHandler
         Destroy(_fallingPiece);
         _fallingPiece = null;
         _fallingPiecePrefab = null;
+
+        // If partial lock out, do NOT give them any points for this block or line 
+        // clears or anything. Just end the game.
+        if (partialLockOut)
+        {
+            TriggerGameOver();
+            return;
+        }
 
         // Check each line to see whether it's full.
         var fullLineYCoordinates = new List<int>();
@@ -340,6 +353,7 @@ public class GameplayState : StateChangeHandler
         // TODO: check whether any pieces on the playfield are partially out
         // of view. If so, GAME OVER ("partial lock out" condition).
         bool partialLockOut = false;
+
         if (partialLockOut)
         {
             TriggerGameOver();
