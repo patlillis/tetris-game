@@ -122,7 +122,14 @@ public class GameplayState : StateChangeHandler
         set { _lines = value; LinesText.text = _lines.ToString(); }
     }
 
+    // Need to keep track of line-clear combos to grant additional points.
+    // This is incremented on each line clear, and set back to -1 for each piece
+    // placement that is NOT a line clear.
     private int _comboCounter = -1;
+
+    // Need this to grant back-to-back tetris bonuses.
+    private bool _previousLineClearWasTetris = false;
+    private bool _previousLineClearWasPerfectTetris = false;
 
     void Awake()
     {
@@ -270,18 +277,35 @@ public class GameplayState : StateChangeHandler
 
         // Check each line to see whether it's full.
         var fullLineYCoordinates = new List<int>();
+        bool perfectClear = false;
         for (int y = 0; y < _fallenTileGrid.GetLength(1); y++)
         {
-            bool lineHasHoles = false;
+            bool lineHasEmptySpaces = false;
+            bool lineHasPieces = false;
             for (int x = 0; x < _fallenTileGrid.GetLength(0); x++)
             {
-                if (_fallenTileGrid[x, y] == null) lineHasHoles = true;
+                if (_fallenTileGrid[x, y] == null)
+                {
+                    lineHasEmptySpaces = true;
+                }
+                else
+                {
+                    lineHasPieces = true;
+                }
             }
 
-            if (!lineHasHoles) fullLineYCoordinates.Add(y);
+            if (!lineHasEmptySpaces) fullLineYCoordinates.Add(y);
+
+            // This line matches overall "perfect clear" criteria if it either
+            // has ONLY EMPTY SPACES (and no pieces), or ONLY PIECES (and no
+            // empty spaces).
+            bool perfectClearLine = lineHasEmptySpaces ^ lineHasPieces;
+            if (!perfectClearLine) perfectClear = false;
         }
 
         int clearedLinesCount = fullLineYCoordinates.Count;
+        bool clearedAnyLines = clearedLinesCount > 0;
+        bool currentLineClearIsTetris = clearedLinesCount >= 4;
         Lines += clearedLinesCount;
 
         // Bump level based on how many they've cleared so far this level.
@@ -291,10 +315,35 @@ public class GameplayState : StateChangeHandler
         Level += _linesThisLevel / 10;
         _linesThisLevel %= 10;
 
-        bool clearedAnyLines = clearedLinesCount > 0;
-        _comboCounter = clearedAnyLines ? (_comboCounter + 1) : -1;
+        // Grant points for line clear (if they cleared any).
+        bool b2bTetris = currentLineClearIsTetris && _previousLineClearWasTetris;
+        _previousLineClearWasTetris = currentLineClearIsTetris;
+        if (clearedAnyLines)
+        {
+            IncrementScore(ScoreUpdate.LineClear(fullLineYCoordinates.Count, b2bTetris, Level));
+        }
 
-        IncrementScore(ScoreUpdate.LineClear(fullLineYCoordinates.Count, _comboCounter, Level));
+        // Grant points for combo.
+        _comboCounter = clearedAnyLines ? (_comboCounter + 1) : -1;
+        if (_comboCounter > 0)
+        {
+            IncrementScore(ScoreUpdate.Combo(_comboCounter, Level));
+        }
+
+        // Grant points for perfect clear.
+        if (perfectClear)
+        {
+            IncrementScore(ScoreUpdate.PerfectClear(clearedLinesCount, Level));
+        }
+
+        // Grant points for back-to-back tetris perfect clear.
+        bool currentLineClearIsPerfectTetris = currentLineClearIsTetris && perfectClear;
+        bool b2bPerfectTetris = currentLineClearIsPerfectTetris && _previousLineClearWasPerfectTetris;
+        _previousLineClearWasPerfectTetris = currentLineClearIsPerfectTetris;
+        if (b2bPerfectTetris)
+        {
+            IncrementScore(ScoreUpdate.BackToBackPerfectTetris(Level));
+        }
 
         // Remove any full lines, move other lines down, and spawn a new piece,
         StartCoroutine(RemoveLinesAndSpawnPiece(fullLineYCoordinates));
