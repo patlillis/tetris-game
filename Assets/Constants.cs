@@ -13,6 +13,8 @@ public static class Constants
         return Mathf.Pow(0.8f - ((clampedLevel - 1) * 0.007f), clampedLevel - 1);
     }
 
+    public static int STARTING_LEVEL = 3;
+
     // DAS values taken from Tetris Guideline https://tetris.wiki/Tetris_Guideline.
     public static readonly float AUTO_SHIFT_DELAY_SECONDS = 0.167f;
     public static readonly float AUTO_REPEAT_RATE_SECONDS = 0.033f;
@@ -23,8 +25,4 @@ public static class Constants
     // number in one place so ¯\_(ツ)_/¯
     public static readonly int NEXT_PIECES_COUNT = 3;
 
-    public enum ScoreUpdateEvent
-    {
-        SoftDrop
-    }
 }

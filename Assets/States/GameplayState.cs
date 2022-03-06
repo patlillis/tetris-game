@@ -94,7 +94,7 @@ public class GameplayState : StateChangeHandler
         get { return _dropTimeForCurrentLevel; }
     }
     // Initialize to drop time for level 1.
-    private float _dropTimeForCurrentLevel = Constants.DROP_TIME_FOR_LEVEL(1);
+    private float _dropTimeForCurrentLevel = Constants.DROP_TIME_FOR_LEVEL(Constants.STARTING_LEVEL);
 
     private int _score = 0;
     public int Score
@@ -102,7 +102,7 @@ public class GameplayState : StateChangeHandler
         get { return _score; }
         set { _score = value; ScoreText.text = _score.ToString(); }
     }
-    private int _level = 1;
+    private int _level = Constants.STARTING_LEVEL;
     public int Level
     {
         get { return _level; }
@@ -114,12 +114,15 @@ public class GameplayState : StateChangeHandler
             _level = value;
         }
     }
+    private int _linesThisLevel = 0;
     private int _lines = 0;
     public int Lines
     {
         get { return _lines; }
         set { _lines = value; LinesText.text = _lines.ToString(); }
     }
+
+    private int _comboCounter = -1;
 
     void Awake()
     {
@@ -278,9 +281,20 @@ public class GameplayState : StateChangeHandler
             if (!lineHasHoles) fullLineYCoordinates.Add(y);
         }
 
-        Lines += fullLineYCoordinates.Count;
-        Score += fullLineYCoordinates.Count * 10;
-        Level = (Lines / 10) + 1;
+        int clearedLinesCount = fullLineYCoordinates.Count;
+        Lines += clearedLinesCount;
+
+        // Bump level based on how many they've cleared so far this level.
+        // (Doing it this way allows them to start at higher levels and still
+        // level-up correctly)
+        _linesThisLevel += clearedLinesCount;
+        Level += _linesThisLevel / 10;
+        _linesThisLevel %= 10;
+
+        bool clearedAnyLines = clearedLinesCount > 0;
+        _comboCounter = clearedAnyLines ? (_comboCounter + 1) : -1;
+
+        IncrementScore(ScoreUpdate.LineClear(fullLineYCoordinates.Count, _comboCounter, Level));
 
         // Remove any full lines, move other lines down, and spawn a new piece,
         StartCoroutine(RemoveLinesAndSpawnPiece(fullLineYCoordinates));
@@ -405,8 +419,9 @@ public class GameplayState : StateChangeHandler
     private void ResetEverything()
     {
         Score = 0;
-        Level = 1;
+        Level = Constants.STARTING_LEVEL;
         Lines = 0;
+        _comboCounter = -1;
 
         // Clear fallen tiles.
         for (int x = 0; x < _fallenTileGrid.GetLength(0); x++)
@@ -440,17 +455,8 @@ public class GameplayState : StateChangeHandler
         Unpause();
     }
 
-    public void UpdateScore(Constants.ScoreUpdateEvent updateEvent)
+    public void IncrementScore(int amount)
     {
-        switch (updateEvent)
-        {
-            case Constants.ScoreUpdateEvent.SoftDrop:
-                Score++;
-                break;
-
-            default:
-                Debug.Log($"Unhandled ScoreUpdateEvent: {updateEvent}");
-                break;
-        }
+        Score += amount;
     }
 }

@@ -104,6 +104,8 @@ public class FallingPiece : MonoBehaviour
             ApplyMovementIfValid(movement);
             _gameplayState.AddFallingPieceToFallenTiles();
             dropped = true;
+            int tilesDropped = -(int)movement.y;
+            _gameplayState.IncrementScore(ScoreUpdate.HardDrop(tilesDropped));
         }
 
         // Soft drop.
@@ -121,7 +123,7 @@ public class FallingPiece : MonoBehaviour
                 _dropState.lastMoveTime = Time.fixedTime;
                 if (shouldSoftDrop)
                 {
-                    _gameplayState.UpdateScore(Constants.ScoreUpdateEvent.SoftDrop);
+                    _gameplayState.IncrementScore(ScoreUpdate.SoftDrop());
                 }
             }
         }
