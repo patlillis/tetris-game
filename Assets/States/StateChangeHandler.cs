@@ -36,6 +36,7 @@ public sealed class StateChangeRegistrar
             stateExitedHandlers[stateBeingExited].Add(handler);
         }
     }
+    // Override for single state.
     public void RegisterStateExitedHandler(State stateBeingExited, Action<State> handler)
     {
         this.RegisterStateExitedHandler(new State[] { stateBeingExited }, handler);
@@ -57,14 +58,17 @@ public sealed class StateChangeRegistrar
             }
         }
     }
+    // Override for single enter & exit state.
     public void RegisterStateChangeHandler(State stateBeingExited, State stateBeingEntered, Action handler)
     {
         this.RegisterStateChangeHandler(new State[] { stateBeingExited }, new State[] { stateBeingEntered }, handler);
     }
+    // Override for single enter state.
     public void RegisterStateChangeHandler(State[] statesBeingExited, State stateBeingEntered, Action handler)
     {
         this.RegisterStateChangeHandler(statesBeingExited, new State[] { stateBeingEntered }, handler);
     }
+    // Override for single exit state.
     public void RegisterStateChangeHandler(State stateBeingExited, State[] statesBeingEntered, Action handler)
     {
         this.RegisterStateChangeHandler(new State[] { stateBeingExited }, statesBeingEntered, handler);
@@ -83,6 +87,7 @@ public sealed class StateChangeRegistrar
             stateEnteredHandlers[stateBeingEntered].Add(handler);
         }
     }
+    // Override for single state.
     public void RegisterStateEnteredHandler(State stateBeingEntered, Action<State> handler)
     {
         this.RegisterStateEnteredHandler(new State[] { stateBeingEntered }, handler);
