@@ -13,7 +13,7 @@ public static class Constants
         return Mathf.Pow(0.8f - ((clampedLevel - 1) * 0.007f), clampedLevel - 1);
     }
 
-    public static int STARTING_LEVEL = 3;
+    public static int STARTING_LEVEL = 1;
 
     // DAS values taken from Tetris Guideline https://tetris.wiki/Tetris_Guideline.
     public static readonly float AUTO_SHIFT_DELAY_SECONDS = 0.167f;
